@@ -1,8 +1,41 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-///1 level 2 task
+//1.2
 using System;
-using Internal;
+
+abstract class Running
+{
+    protected string name;
+    protected double time;
+
+    public Running(string name, double time)
+    {
+        this.name = name;
+        this.time = time;
+    }
+
+    public abstract void DisplayInfo();
+}
+
+class Running100m : Running
+{
+    public Running100m(string name, double time) : base(name, time) { }
+
+    public override void DisplayInfo()
+    {
+        Console.WriteLine($"Name: {name}, Distance: 100m, Time: {time} seconds");
+    }
+}
+
+class Running500m : Running
+{
+    public Running500m(string name, double time) : base(name, time) { }
+
+    public override void DisplayInfo()
+    {
+        Console.WriteLine($"Name: {name}, Distance: 500m, Time: {time} seconds");
+    }
+}
 
 struct Sportsmen
 {
@@ -23,7 +56,7 @@ struct Sportsmen
 
     public void DisplayInfo()
     {
-        Console.WriteLine($"Имя {name}, Фамилия {surname}, Группа {group}, Тренер {tutor}, Результат {result}.");
+        Console.WriteLine($"Имя: {name}, Фамилия: {surname}, Группа: {group}, Тренер: {tutor}, Результат: {result}");
     }
 
     public double GetResult()
@@ -36,74 +69,81 @@ class Program
 {
     static void Main()
     {
-        Sportsmen[] sp = new Sportsmen[5];
-        string[] s = new string[] {
-            "Иванова", "Петрова", "Сидорова",
-            "Кузнецова", "Макарова"};
-        string[] n = new string[] {
-            "Катя", "Маша", "Лера",
-            "Соня", "Валя"};
-        string[] g = new string[] {
-            "160-165", "165-170", "170-175",
-            "175-180", "180-185"};
-        string[] t = new string[] {
-            "Наумов", "Селиванов", "Аборин",
-            "Киренко", "Жидков"};
-        double[] r = new double[] {1.50,
-            1.55, 1.47, 1.46, 1.54};
-        for (int i = 0; i < sp.Length; i++)
+        Running[] runners = new Running[]
         {
-            sp[i] = new Sportsmen(n[i], s[i], g[i], t[i], r[i]);
-            sp[i].DisplayInfo();
-        }
+            new Running100m("Иванова Катя", 12.5),
+            new Running100m("Петрова Маша", 11.8),
+            new Running100m("Сидорова Лера", 13.2),
+            new Running500m("Кузнецова Соня", 60.3),
+            new Running500m("Макарова Валя", 58.9)
+        };
 
-        for (int i = 0; i < sp.Length; i++)
+        Console.WriteLine("Results for 100m race:");
+        Console.WriteLine("-----------------------");
+        foreach (var runner in runners)
         {
-            double max = double.MinValue;
-            int index = i;
-            for (int j = i + 1; j < sp.Length; j++)
+            if (runner is Running100m)
             {
-                if (sp[j].GetResult() > max)
-                {
-                    max = sp[j].GetResult();
-                    index = j;
-                }
+                runner.DisplayInfo();
             }
-            Sportsmen temp;
-            temp = sp[index];
-            sp[index] = sp[i];
-            sp[i] = temp;
         }
 
-        Console.WriteLine();
-        for (int i = 0; i < sp.Length; i++)
+        Console.WriteLine("\nResults for 500m race:");
+        Console.WriteLine("-----------------------");
+        foreach (var runner in runners)
         {
-            sp[i].DisplayInfo();
+            if (runner is Running500m)
+            {
+                runner.DisplayInfo();
+            }
         }
     }
 }
- 
 
-
-/// 2 level 1 task
+//2.1
 using System;
-struct Student
-{
-    private string surname;
-    private double[] x;
-    private double sum;
 
-    public Student(string surname1, double[] x1)
+class Person
+{
+    protected string firstName;
+    protected string lastName;
+    protected string patronymic;
+
+    public Person(string firstName, string lastName, string patronymic)
     {
-        sum = 0;
-        surname = surname1;
-        x = x1;
-        for (int i = 0; i < 4; i++)
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patronymic = patronymic;
+    }
+
+    public string GetFullName()
+    {
+        return $"{lastName} {firstName} {patronymic}";
+    }
+}
+
+class Student : Person
+{
+    private int studentId;
+    private double[] grades;
+    private double averageGrade;
+
+    public Student(string firstName, string lastName, string patronymic, int studentId, double[] grades) : base(firstName, lastName, patronymic)
+    {
+        this.studentId = studentId;
+        this.grades = grades;
+        CalculateAverageGrade();
+        Console.WriteLine($"ФИО: {GetFullName()}, № студ. билета: {studentId}, Средний балл: {averageGrade}");
+    }
+
+    private void CalculateAverageGrade()
+    {
+        double sum = 0;
+        foreach (double grade in grades)
         {
-            sum += x[i];
+            sum += grade;
         }
-        sum /= 4;
-        Console.WriteLine($"Имя {surname}, Средний балл - {sum}");
+        averageGrade = sum / grades.Length;
     }
 }
 
@@ -111,70 +151,62 @@ class Program
 {
     static void Main(string[] args)
     {
-        Student[] sp = new Student[3];
-        sp[0] = new Student("Наумов", new double[] { 5.0, 5.0, 5.0, 5.0, 5.0 });
-        sp[1] = new Student("Селиванов", new double[] { 2.0, 2.0, 3.0, 4.0, 4.0 });
-        sp[2] = new Student("Аборин", new double[] { 5.0, 4.0, 4.0, 4.0, 4.0 });
+        Student[] students = new Student[3];
+        students[0] = new Student("Иван", "Наумов", "Петрович", 12345, new double[] { 5.0, 5.0, 5.0, 5.0, 5.0 });
+        students[1] = new Student("Петр", "Селиванов", "Иванович", 54321, new double[] { 2.0, 2.0, 3.0, 4.0, 4.0 });
+        students[2] = new Student("Алексей", "Аборин", "Сергеевич", 98765, new double[] { 5.0, 4.0, 4.0, 4.0, 4.0 });
 
         Console.WriteLine();
 
-        for (int i = 0; i < sp.Length - 1; i++)
+        for (int i = 0; i < students.Length - 1; i++)
         {
-            double max = sp[i].sum;
+            double max = students[i].averageGrade;
             int index = i;
-            for (int j = i + 1; j < sp.Length; j++)
+            for (int j = i + 1; j < students.Length; j++)
             {
-                if (sp[j].sum > max)
+                if (students[j].averageGrade > max)
                 {
-                    max = sp[j].sum;
+                    max = students[j].averageGrade;
                     index = j;
                 }
 
-                Student temp;
-                temp = sp[index];
-                sp[index] = sp[i];
-                sp[i] = temp;
+                Student temp = students[index];
+                students[index] = students[i];
+                students[i] = temp;
             }
         }
+
         Console.WriteLine();
-        for (int i = 0; i < sp.Length; i++)
+        for (int i = 0; i < students.Length; i++)
         {
-            if (sp[i].sum >= 4)
+            if (students[i].averageGrade >= 4)
             {
-                Console.WriteLine($"Имя {sp[i].surname}, Средний балл - {sp[i].sum}");
+                Console.WriteLine($"ФИО: {students[i].GetFullName()}, № студ. билета: {students[i].studentId}, Средний балл: {students[i].averageGrade}");
             }
         }
     }
 }
 
 
-/// <summary>
-/// 3 level 1 task
-/// </summary>
+
+
+//3.1
 using System;
 
 class Group
 {
     public string Name { get; private set; }
-    private int[] examScores;
+    protected int[] examScores;
+    protected string[] subjects;
 
-    public Group(string name, int[] scores)
+    public Group(string name, int[] scores, string[] subjects)
     {
         Name = name;
         examScores = scores;
+        this.subjects = subjects;
     }
 
-    public int[] GetExamScores()
-    {
-        return examScores;
-    }
-
-    public void SetExamScores(int[] scores)
-    {
-        examScores = scores;
-    }
-
-    public double GetAverageScore()
+    public virtual double GetAverageScore()
     {
         int sum = 0;
         foreach (int score in examScores)
@@ -183,6 +215,49 @@ class Group
         }
         return (double)sum / examScores.Length;
     }
+
+    public void PrintStudents()
+    {
+        Console.WriteLine($"Group: {Name}");
+        for (int i = 0; i < examScores.Length; i++)
+        {
+            Console.WriteLine($"Student {i + 1}: Average Score - {GetAverageScore()} | Subjects: {string.Join(", ", subjects)}");
+        }
+        Console.WriteLine();
+    }
+}
+
+class GroupA : Group
+{
+    public GroupA(string name, int[] scores) : base(name, scores, new string[] { "Math", "Physics" }) { }
+
+    public override double GetAverageScore()
+    {
+        // Custom calculation for GroupA average score
+        return base.GetAverageScore() * 1.1; // Adding 10%
+    }
+}
+
+class GroupB : Group
+{
+    public GroupB(string name, int[] scores) : base(name, scores, new string[] { "English", "History" }) { }
+
+    public override double GetAverageScore()
+    {
+        // Custom calculation for GroupB average score
+        return base.GetAverageScore() * 0.9; // Subtracting 10%
+    }
+}
+
+class GroupC : Group
+{
+    public GroupC(string name, int[] scores) : base(name, scores, new string[] { "Chemistry", "Biology" }) { }
+
+    public override double GetAverageScore()
+    {
+        // Custom calculation for GroupC average score
+        return base.GetAverageScore(); // No change
+    }
 }
 
 class Program
@@ -190,35 +265,15 @@ class Program
     static void Main()
     {
         Group[] groups = new Group[3];
-        groups[0] = new Group("1", new int[] { 5, 5, 5, 5, 5 });
-        groups[1] = new Group("2", new int[] { 2, 2, 3, 4, 4 });
-        groups[2] = new Group("3", new int[] { 5, 4, 4, 4, 4 });
+        groups[0] = new GroupA("1", new int[] { 5, 5, 5, 5, 5 });
+        groups[1] = new GroupB("2", new int[] { 2, 2, 3, 4, 4 });
+        groups[2] = new GroupC("3", new int[] { 5, 4, 4, 4, 4 });
 
-        Sort(groups);
-
-        Console.WriteLine("Average Score");
+        Console.WriteLine("Students from all groups:");
         foreach (var group in groups)
         {
-            Console.WriteLine($"| {group.Name,-7} | {group.GetAverageScore(),-13:F2} |");
-        }
-    }
-
-    static void Sort(Group[] arr)
-    {
-        int n = arr.Length;
-        for (int i = 0; i < n - 1; i++)
-        {
-            for (int j = 0; j < n - i - 1; j++)
-            {
-                if (arr[j].GetAverageScore() < arr[j + 1].GetAverageScore())
-                {
-                    Group temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
-            }
+            group.PrintStudents();
         }
     }
 }
-
 
