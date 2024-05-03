@@ -1,0 +1,69 @@
+﻿// See https://aka.ms/new-console-template for more information
+using System;
+struct Student
+{
+    public string Surname { get; private set; }
+    public double[] X { get; private set; }
+    public double Sum { get; private set; }
+
+    public Student(string surname1, double[] x1)
+    {
+        Sum = 0;
+        Surname = surname1;
+        X = x1;
+        for (int i = 0; i < 4; i++)
+        {
+            Sum += X[i];
+        }
+        Sum /= 4;
+        Console.WriteLine($"Имя {Surname}, Средний балл - {Sum}");
+    }
+
+    public static void GnomeSort(Student[] arr)
+    {
+        int pos = 1;
+        int j = pos + 1;
+
+        while (pos < arr.Length)
+        {
+            if (pos == 0 || arr[pos].Sum >= arr[pos - 1].Sum)
+            {
+                pos = j;
+                pos++;
+            }
+            else
+            {
+                Student temp = arr[pos];
+                arr[pos] = arr[pos - 1];
+                arr[pos - 1] = temp;
+                pos--;
+            }
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Student[] sp = new Student[3];
+        sp[0] = new Student("Наумов", new double[] { 5.0, 5.0, 5.0, 5.0 });
+        sp[1] = new Student("Селиванов", new double[] { 2.0, 2.0, 3.0, 4.0 });
+        sp[2] = new Student("Аборин", new double[] { 5.0, 4.0, 4.0, 4.0 });
+
+        Console.WriteLine();
+
+        Student.GnomeSort(sp);
+
+        Console.WriteLine();
+
+        for (int i = 0; i < sp.Length; i++)
+        {
+            if (sp[i].Sum >= 4)
+            {
+                Console.WriteLine($"Имя {sp[i].Surname}, Средний балл - {sp[i].Sum}");
+            }
+        }
+    }
+}
+
