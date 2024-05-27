@@ -1,0 +1,347 @@
+﻿
+using System.Text.RegularExpressions;
+
+2
+using System;
+using System.Text;
+
+class MessageProcessor
+{
+    public virtual string Process(string message)
+    {
+        return message;
+    }
+}
+
+class Encryptor : MessageProcessor
+{
+    public override string Process(string message)
+    {
+        string[] words = message.Split(' ');
+        StringBuilder encryptedMessage = new StringBuilder();
+
+        foreach (string word in words)
+        {
+            char[] characters = word.ToCharArray();
+            Array.Reverse(characters);
+            encryptedMessage.Append(new string(characters) + " ");
+        }
+
+        return encryptedMessage.ToString().Trim();
+    }
+}
+
+class Decryptor : MessageProcessor
+{
+    public override string Process(string message)
+    {
+        string[] words = message.Split(' ');
+        StringBuilder decryptedMessage = new StringBuilder();
+
+        foreach (string word in words)
+        {
+            char[] characters = word.ToCharArray();
+            Array.Reverse(characters);
+            decryptedMessage.Append(new string(characters) + " ");
+        }
+
+        return decryptedMessage.ToString().Trim();
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите сообщение для шифрования:");
+        string message = Console.ReadLine();
+
+        MessageProcessor encryptor = new Encryptor();
+        string encryptedMessage = encryptor.Process(message);
+        Console.WriteLine("\nЗашифрованное сообщение: " + encryptedMessage);
+
+        MessageProcessor decryptor = new Decryptor();
+        string decryptedMessage = decryptor.Process(encryptedMessage);
+        Console.WriteLine("Расшифрованное сообщение: " + decryptedMessage);
+
+        Console.ReadLine();
+    }
+}
+
+
+4
+using System;
+using System.Text.RegularExpressions;
+
+abstract class TextAnalyzer
+{
+    public abstract int CalculateComplexity(string text);
+}
+
+class WordPunctuationAnalyzer : TextAnalyzer
+{
+    public override int CalculateComplexity(string text)
+    {
+        string[] wordsAndPunctuation = Regex.Split(text, @"(\W)");
+        int wordCount = 0;
+        int punctuationCount = 0;
+
+        foreach (string item in wordsAndPunctuation)
+        {
+            if (!string.IsNullOrWhiteSpace(item))
+            {
+                if (char.IsLetterOrDigit(item[0]))
+                    wordCount++;
+                else
+                    punctuationCount++;
+            }
+        }
+
+        return wordCount + punctuationCount;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите предложение:");
+        string sentence = Console.ReadLine();
+
+        TextAnalyzer analyzer = new WordPunctuationAnalyzer();
+        int complexity = analyzer.CalculateComplexity(sentence);
+
+        Console.WriteLine($"\nСложность предложения: {complexity}");
+
+        Console.ReadLine();
+    }
+}
+
+
+5
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+abstract class TextAnalyzer
+{
+    public abstract void AnalyzeText(string text);
+}
+
+class LetterFrequencyAnalyzer : TextAnalyzer
+{
+    public override void AnalyzeText(string text)
+    {
+        Dictionary<char, int> letterFrequencies = CountLetterFrequencies(text);
+
+        Console.WriteLine("\nБуквы, на которые начинаются слова в тексте, в порядке убывания частоты их употребления:");
+        foreach (var pair in letterFrequencies.OrderByDescending(pair => pair.Value))
+        {
+            Console.WriteLine($"{pair.Key}: {pair.Value}");
+        }
+    }
+
+    private Dictionary<char, int> CountLetterFrequencies(string text)
+    {
+        Dictionary<char, int> letterFrequencies = new Dictionary<char, int>();
+
+        string[] words = text.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string word in words)
+        {
+            if (!string.IsNullOrEmpty(word))
+            {
+                char firstLetter = word[0];
+
+                if (char.IsLetter(firstLetter))
+                {
+                    if (letterFrequencies.ContainsKey(firstLetter))
+                        letterFrequencies[firstLetter]++;
+                    else
+                        letterFrequencies[firstLetter] = 1;
+                }
+            }
+        }
+
+        return letterFrequencies;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите текст:");
+        string text = Console.ReadLine();
+
+        TextAnalyzer analyzer = new LetterFrequencyAnalyzer();
+        analyzer.AnalyzeText(text);
+
+        Console.ReadLine();
+    }
+}
+
+
+7
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+abstract class TextAnalyzer
+{
+    public abstract List<string> AnalyzeText(string text, string sequence);
+}
+
+class SequenceAnalyzer : TextAnalyzer
+{
+    public override List<string> AnalyzeText(string text, string sequence)
+    {
+        List<string> wordsContainingSequence = FindWordsContainingSequence(text, sequence);
+
+        return wordsContainingSequence;
+    }
+
+    private List<string> FindWordsContainingSequence(string text, string sequence)
+    {
+        List<string> wordsContainingSequence = new List<string>();
+
+        string[] words = Regex.Split(text, @"\W+");
+
+        foreach (string word in words)
+        {
+            if (word.Contains(sequence, StringComparison.OrdinalIgnoreCase))
+                wordsContainingSequence.Add(word);
+        }
+
+        return wordsContainingSequence;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите текст:");
+        string text = Console.ReadLine();
+
+        Console.WriteLine("Введите последовательность букв:");
+        string sequence = Console.ReadLine();
+
+        TextAnalyzer analyzer = new SequenceAnalyzer();
+        List<string> wordsContainingSequence = analyzer.AnalyzeText(text, sequence);
+
+        Console.WriteLine($"\nСлова, содержащие последовательность '{sequence}':");
+        foreach (string word in wordsContainingSequence)
+        {
+            Console.WriteLine(word);
+        }
+
+        Console.ReadLine();
+    }
+}
+
+11
+using System;
+using System.Linq;
+
+abstract class SurnameSorter
+{
+    public abstract string[] SortSurnames(string[] surnames);
+}
+
+class DefaultSurnameSorter : SurnameSorter
+{
+    public override string[] SortSurnames(string[] surnames)
+    {
+        Array.Sort(surnames);
+        return surnames;
+    }
+}
+
+class ReverseSurnameSorter : SurnameSorter
+{
+    public override string[] SortSurnames(string[] surnames)
+    {
+        Array.Sort(surnames);
+        Array.Reverse(surnames);
+        return surnames;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите список фамилий, разделенных запятыми:");
+        string input = Console.ReadLine();
+
+        string[] surnames = input.Split(',');
+
+        for (int i = 0; i < surnames.Length; i++)
+        {
+            surnames[i] = surnames[i].Trim();
+        }
+
+        SurnameSorter sorter = new DefaultSurnameSorter();
+        string[] sortedSurnames = sorter.SortSurnames(surnames);
+
+        Console.WriteLine("\nОтсортированный список фамилий:");
+        foreach (string surname in sortedSurnames)
+        {
+            Console.WriteLine(surname);
+        }
+    }
+}
+
+
+14
+using System;
+
+abstract class NumberSumCalculator
+{
+    public abstract int CalculateNumberSum(string text);
+}
+
+class DefaultNumberSumCalculator : NumberSumCalculator
+{
+    public override int CalculateNumberSum(string text)
+    {
+        int sum = 0;
+        string[] words = text.Split(new[] { ' ', ',', '.', '!', '?', ':', ';', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string word in words)
+        {
+            int number;
+            if (int.TryParse(word, out number) && number >= 1 && number <= 10)
+                sum += number;
+        }
+
+        return sum;
+    }
+}
+
+class CustomNumberSumCalculator : NumberSumCalculator
+{
+    public override int CalculateNumberSum(string text)
+    {
+        int sum = 0;
+        // Добавьте здесь свою логику обработки текста для вычисления суммы чисел
+
+        return sum;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите текст:");
+        string text = Console.ReadLine();
+
+        NumberSumCalculator calculator = new DefaultNumberSumCalculator(); // Можно использовать CustomNumberSumCalculator для другой логики
+        int sum = calculator.CalculateNumberSum(text);
+
+        Console.WriteLine($"\nСумма чисел в тексте: {sum}");
+    }
+}
+
